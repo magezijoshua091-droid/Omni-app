@@ -1,0 +1,5 @@
+{
+  "name": "Omni - AI File OS",
+  "description": "AI-powered File Operating System for compressing, converting, and analyzing files. Production-ready SaaS with Stripe, AWS S3, and Redis queues.",
+  "requestFramePermissions": []
+}
