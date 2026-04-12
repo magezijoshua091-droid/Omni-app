@@ -73,8 +73,7 @@ async function startServer() {
     // Check for critical infrastructure environment variables
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl || (!dbUrl.startsWith("postgresql://") && !dbUrl.startsWith("postgres://"))) {
-      console.error("❌ CRITICAL: DATABASE_URL is missing or invalid. Database operations will fail.");
-      console.info("💡 Note: Demo mode will use mock data as a fallback.");
+      console.info("💡 Running in Demo Mode (No database connected). Use 'Demo Account' to preview.");
     }
     
     if (!process.env.REDIS_URL) console.warn("⚠️  REDIS_URL is missing. Queue processing will fail.");
