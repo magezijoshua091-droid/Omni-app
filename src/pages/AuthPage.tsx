@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { Zap, Loader2, AlertCircle } from "lucide-react";
+import { Zap, Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { Button } from "../components/ui/button";
 import api from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -30,6 +30,23 @@ export default function AuthPage() {
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.post("/auth/login", { 
+        email: "demo@omni.ai", 
+        password: "demo123" 
+      });
+      authLogin(res.data.token, res.data.user);
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError("Demo login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -118,6 +135,29 @@ export default function AuthPage() {
               </Button>
             </div>
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
+              </div>
+              <div className="relative flex justify-center text-sm font-medium leading-6">
+                <span className="bg-white dark:bg-gray-950 px-4 text-gray-500">Or continue with</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <Button 
+                variant="outline" 
+                className="w-full h-11 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900"
+                onClick={handleDemoLogin}
+                disabled={loading}
+              >
+                <Sparkles className="w-4 h-4 mr-2 text-blue-600" />
+                Demo Account
+              </Button>
+            </div>
+          </div>
 
           <p className="mt-10 text-center text-sm text-gray-500 dark:text-gray-400">
             {mode === "login" ? "Not a member? " : "Already have an account? "}
