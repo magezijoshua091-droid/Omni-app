@@ -16,6 +16,11 @@ import AuthPage from "./pages/AuthPage";
 import AboutPage from "./pages/AboutPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import DocumentationPage from "./pages/DocumentationPage";
+import BlogPage from "./pages/BlogPage";
+import ContactPage from "./pages/ContactPage";
+import APIStatusPage from "./pages/APIStatusPage";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -157,6 +162,11 @@ export default function App() {
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/privacy" element={<PrivacyPage />} />
                   <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/features" element={<FeaturesPage />} />
+                  <Route path="/docs" element={<DocumentationPage />} />
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/status" element={<APIStatusPage />} />
                 </Routes>
               </ErrorBoundary>
             </main>

@@ -46,7 +46,7 @@ export default function AuthPage() {
       authLogin(res.data.token, res.data.user);
       navigate("/dashboard");
     } catch (err: any) {
-      setError("Demo login failed. Please try again.");
+      setError(err.response?.data?.error || "Demo login failed. Please try again.");
     } finally {
       setLoading(false);
     }
