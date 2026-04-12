@@ -32,3 +32,31 @@ export async function generateDownloadUrl(key: string) {
   // URL expires in 1 hour
   return getSignedUrl(s3Client, command, { expiresIn: 3600 });
 }
+
+export async function downloadFile(key: string): Promise<Buffer> {
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  
+  const response = await s3Client.send(command);
+  const stream = response.Body as any;
+  
+  return new Promise((resolve, reject) => {
+    const chunks: any[] = [];
+    stream.on("data", (chunk: any) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+  });
+}
+
+export async function uploadFile(key: string, body: Buffer, contentType: string) {
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Body: body,
+    ContentType: contentType,
+  });
+  
+  return s3Client.send(command);
+}

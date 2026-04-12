@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { Queue, Worker, Job } from "bullmq";
+import { Queue } from "bullmq";
 import { prisma } from "./db";
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
@@ -45,6 +45,12 @@ const mockQueue = {
     setTimeout(async () => {
       try {
         console.log(`[Mock Worker] Processing file ${data.fileId}...`);
+        
+        await prisma.file.update({
+          where: { id: data.fileId },
+          data: { status: "PROCESSING" }
+        });
+
         await new Promise(resolve => setTimeout(resolve, 3000));
         
         await prisma.file.update({
@@ -76,28 +82,4 @@ export const fileProcessingQueue = {
     }
   }
 };
-
-// Real Worker
-export const fileProcessingWorker = new Worker(
-  "file-processing",
-  async (job: Job) => {
-    console.log(`[Real Worker] Processing job ${job.id} for file ${job.data.fileId}`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    await prisma.file.update({
-      where: { id: job.data.fileId },
-      data: { status: "COMPLETED" }
-    });
-    
-    return { success: true };
-  },
-  { connection: redis, autorun: false }
-);
-
-// Attempt to connect and start real worker if possible
-redis.connect().then(() => {
-  fileProcessingWorker.run();
-}).catch(() => {
-  console.log("ℹ️ Redis not found. Using Mock Queue for preview environment.");
-});
 

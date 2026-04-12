@@ -8,6 +8,8 @@ import authRouter from "./src/server/routes/auth";
 import fileRouter from "./src/server/routes/files";
 import billingRouter from "./src/server/routes/billing";
 import processRouter from "./src/server/routes/process";
+import { redis } from "./src/server/redis";
+import { fileProcessingWorker } from "./src/server/worker";
 
 async function startServer() {
   const app = express();
@@ -60,6 +62,14 @@ async function startServer() {
     console.log(`\n🚀 Omni Server running on http://localhost:${PORT}`);
     console.log(`⚙️  Environment: ${process.env.NODE_ENV || "development"}`);
     
+    // Start Redis and Worker
+    redis.connect().then(() => {
+      console.log("🟢 Worker starting...");
+      fileProcessingWorker.run();
+    }).catch(() => {
+      console.log("ℹ️ Redis not found. Using Mock Queue for preview environment.");
+    });
+
     // Check for critical infrastructure environment variables
     if (!process.env.DATABASE_URL) console.warn("⚠️  DATABASE_URL is missing. DB operations will fail.");
     if (!process.env.REDIS_URL) console.warn("⚠️  REDIS_URL is missing. Queue processing will fail.");
