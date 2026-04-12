@@ -71,7 +71,12 @@ async function startServer() {
     });
 
     // Check for critical infrastructure environment variables
-    if (!process.env.DATABASE_URL) console.warn("⚠️  DATABASE_URL is missing. DB operations will fail.");
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl || (!dbUrl.startsWith("postgresql://") && !dbUrl.startsWith("postgres://"))) {
+      console.error("❌ CRITICAL: DATABASE_URL is missing or invalid. Database operations will fail.");
+      console.info("💡 Note: Demo mode will use mock data as a fallback.");
+    }
+    
     if (!process.env.REDIS_URL) console.warn("⚠️  REDIS_URL is missing. Queue processing will fail.");
     if (!process.env.AWS_ACCESS_KEY_ID) console.warn("⚠️  AWS credentials missing. S3 uploads will fail.");
   });

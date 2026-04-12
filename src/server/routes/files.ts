@@ -13,6 +13,45 @@ router.get("/", requireAuth, async (req: AuthRequest, res) => {
     });
     res.json(files);
   } catch (error) {
+    console.warn("⚠️ Database connection failed while fetching files, using mock data for demo");
+    
+    // Fallback mock data for demo purposes
+    if (req.user?.email === "demo@omni.ai" || req.user?.id === "demo-user-uuid-1234-5678") {
+      const mockFiles = [
+        {
+          id: "mock-file-1",
+          name: "Project_Proposal.pdf",
+          type: "application/pdf",
+          size: 2400000,
+          status: "COMPLETED",
+          createdAt: new Date().toISOString(),
+          url: "#",
+          metadata: { savings: 35, action: "compress" }
+        },
+        {
+          id: "mock-file-2",
+          name: "Product_Shot.jpg",
+          type: "image/jpeg",
+          size: 5600000,
+          status: "COMPLETED",
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          url: "#",
+          metadata: { savings: 62, action: "convert" }
+        },
+        {
+          id: "mock-file-3",
+          name: "Quarterly_Report.docx",
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          size: 1200000,
+          status: "UPLOADED",
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
+          url: "#"
+        }
+      ];
+      res.json(mockFiles);
+      return;
+    }
+    
     res.status(500).json({ error: "Internal server error" });
   }
 });

@@ -107,6 +107,19 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
     });
     res.json(user);
   } catch (error) {
+    console.warn("⚠️ Database connection failed while fetching user profile, using mock data");
+    
+    // Fallback for demo user
+    if (req.user?.email === "demo@omni.ai" || req.user?.id === "demo-user-uuid-1234-5678") {
+      res.json({
+        id: req.user?.id || "demo-user-uuid-1234-5678",
+        email: "demo@omni.ai",
+        role: "PRO",
+        subscription: { plan: "PRO", status: "active" }
+      });
+      return;
+    }
+    
     res.status(500).json({ error: "Internal server error" });
   }
 });
